@@ -1,58 +1,54 @@
+package stubs;
+
+import java.util.HashMap;
+
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.conf.Configurable;
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.mapreduce.Partitioner;
 
-public class Partitioner extends Partitioner<K, V> implements Configurable {
+public class MonthPartitioner<K2, V2> extends Partitioner<Text, Text> implements
+    Configurable {
 
-    private Configuration configuration;
+  private Configuration configuration;
+  HashMap<String, Integer> months = new HashMap<String, Integer>();
 
-    @Override
-    public void setConf(Configuration configuration){
-      this.configuration = configuration;
-    }
+  @Override
+  public void setConf(Configuration configuration) {
+    //This sets the Partitioner configuration to the job configuration
+	  this.configuration = configuration;
+	  /*
+	   * Add the months to a HashMap months.
+	   */
+	  months.put("Jan", 0);
+	  months.put("Feb", 1);
+	  months.put("Mar", 2);
+	  months.put("Apr", 3);
+	  months.put("May", 4);
+	  months.put("Jun", 5);
+	  months.put("Jul", 6);
+	  months.put("Aug", 7);
+	  months.put("Sep", 8);
+	  months.put("Oct", 9);
+	  months.put("Nov", 10);
+	  months.put("Dec", 11);
+  }
 
-    @Override
-    public Configuration getConf(){
-      return this.configuration;
-    }
+  /**
+   * Implement the getConf method for the Configurable interface.
+   */
+  @Override
+  public Configuration getConf() {
+    //This line is called whenever the job is run to get the current configuration
+	  return configuration;
+  }
 
-    //For future Thomas,
-    //I think this will have to use compareTo because it's generic.
-    //Asking James right now.
-    public int getPartition(K key, V value, int numReduceTasks){
-      if(value.equals("Jan")){
-  			return 0;
-  		}
-  		else if(value.equals("Feb")){
-  			return 1;
-  		}
-      else if(value.equals("Mar")){
-  			return 2;
-  		}
-      else if(value.equals("Apr")){
-  			return 3;
-  		}
-      else if(value.equals("May")){
-  			return 4;
-  		}
-      else if(value.equals("Jun")){
-  			return 5;
-  		}
-      else if(value.equals("Jul")){
-  			return 6;
-  		}
-      else if(value.equals("Aug")){
-  			return 7;
-  		}
-      else if(value.equals("Sep")){
-  			return 8;
-  		}
-      else if(value.equals("Oct")){
-  			return 9;
-  		}
-      else if(value.equals("Nov")){
-  			return 10;
-  		}
-      else{
-        return 11;
-      }
-    }
+  public int getPartition(Text key, Text value, int numReduceTasks) {
+
+	  /* This one line of code is actually quite simple. It just uses the global
+	   * hashtable to look up the value 0-11 of a month as given in the value
+	   * using this int it sends the key value pair to the correct reducer.
+	   */
+	  return (months.get(value.toString()));
+  }
 }
